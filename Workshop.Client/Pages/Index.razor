@@ -7,7 +7,10 @@
     {
       @foreach (var deal in deals)
       {
-        <li style="background-image: url('@deal.ImageUrl')">
+        <li
+          @onclick="@(() => ShowConfigureDrugDialog(deal))"
+          style="background-image: url('@deal.ImageUrl')"
+        >
           <div class="drug-info">
             <span class="title">@deal.Name</span>
             @deal.Description
@@ -18,12 +21,82 @@
     }
   </ul>
 </div>
+<div class="sidebar">
+  @if (order.Drugs.Any())
+  {
+    <div class="order-contents">
+      <h2>Your order</h2>
+
+      @foreach (var configuredDrug in order.Drugs)
+      {
+        <ConfiguredDrugItem Drug="configuredDrug" OnRemoved="@(() => RemoveConfiguredDrug(configuredDrug))" />
+      }
+    </div>
+  }
+  else
+  {
+    <div class="empty-cart">Choose a drug<br>to get started</div>
+  }
+
+  <div class="order-total @(order.Drugs.Any() ? "" : "hidden")">
+    Total:
+    <span class="total-price">@order.GetFormattedTotalPrice()</span>
+    <button class="btn btn-warning" disabled="@(order.Drugs.Count == 0)" @onclick="@PlaceOrder">
+      Order >
+    </button>
+  </div>
+</div>
+
+@if (showingConfigureDialog) {
+<ConfigureDrugDialog
+  Drug="configuringDrug"
+  OnCancel="CancelConfigureDrugDialog"
+  OnConfirm="ConfirmDrugDialog"
+/>
+}
 
 @code {
   List<DrugDeal> deals;
+  Drug configuringDrug;
+  bool showingConfigureDialog;
+  Order order = new Order();
 
   protected async override Task OnInitializedAsync()
   {
     deals = await HttpClient.GetJsonAsync<List<DrugDeal>>("deals");
   }
+
+  void ShowConfigureDrugDialog(DrugDeal deal)
+  {
+    configuringDrug = new Drug()
+    {
+      Deal = deal,
+      DealId = deal.Id,
+      Quantity = Drug.DefaultQuantity,
+    };
+
+    showingConfigureDialog = true;
+  }
+
+  void CancelConfigureDrugDialog() {
+    configuringDrug = null;
+    showingConfigureDialog = false;
+  }
+
+  void ConfirmDrugDialog() {
+    order.Drugs.Add(configuringDrug);
+    CancelConfigureDrugDialog();
+  }
+
+  void RemoveConfiguredDrug(Drug drug)
+  {
+    order.Drugs.Remove(drug);
+  }
+
+  async Task PlaceOrder()
+  {
+    await HttpClient.PostJsonAsync("orders", order);
+    order = new Order();
+  }
+
 }

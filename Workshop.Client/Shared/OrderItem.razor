@@ -1,0 +1,22 @@
+
+<div class="list-group-item">
+    <div class="col">
+        <h5>@OrderWithStatus.Order.CreatedTime.ToLongDateString()</h5>
+        Items:
+        <strong>@OrderWithStatus.Order.Drugs.Count()</strong>;
+        Total price:
+        <strong>$@OrderWithStatus.Order.GetFormattedTotalPrice()</strong>
+    </div>
+    <div class="col">
+        Status: <strong>@OrderWithStatus.StatusText</strong>
+    </div>
+    <div class="col flex-grow-0">
+        <a href="myorders/@OrderWithStatus.Order.OrderId" class="btn btn-success">
+            Track &gt;
+        </a>
+    </div>
+</div>
+
+@code {
+    [Parameter] public OrderWithStatus OrderWithStatus { get; set; }
+}

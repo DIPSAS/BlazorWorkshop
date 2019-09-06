@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Twitter" Version="3.0.0-preview9.19424.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor.Server" Version="3.0.0-preview9.19424.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0-preview9.19424.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.0.0-preview9.19423.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Workshop.Client\Workshop.Client.csproj" />
+    <ProjectReference Include="..\Workshop.Shared\Workshop.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

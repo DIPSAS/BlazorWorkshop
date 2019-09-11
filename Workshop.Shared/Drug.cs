@@ -8,12 +8,13 @@ namespace Workshop
     /// </summary>
     public class Drug
     {
-        public const int DefaultSize = 12;
-        public const int MinimumSize = 9;
-        public const int MaximumSize = 17;
+        public const int DefaultSize = 1;
+        public const int MinimumSize = 1;
+        public const int MaximumSize = 10;
 
         public int Id { get; set; }
 
+        public int Size { get; set; }
         public int OrderId { get; set; }
 
         public DrugSpecial Special { get; set; }

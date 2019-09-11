@@ -1,3 +1,31 @@
 ﻿@page "/"
+@inject HttpClient HttpClient
 
-<h1>Wolt-aren</h1>
+
+<div class="main">
+    <ul class="drug-cards">
+        @if (specials != null)
+        {
+            @foreach (var special in specials)
+            {
+                <li style="background-image: url('@special.ImageUrl')">
+                    <div class="drug-info">
+                        <span class="title">@special.Name</span>
+                        @special.Description
+                        <span class="price">@special.GetFormattedBasePrice()</span>
+                    </div>
+                </li>
+            }
+        }
+    </ul>
+</div>
+
+
+@code {
+    List<DrugSpecial> specials;
+
+    protected async override Task OnInitializedAsync()
+    {
+        specials = await HttpClient.GetJsonAsync<List<DrugSpecial>>("specials");
+    }
+}

@@ -1,0 +1,12 @@
+<div class="cart-item">
+    <a @onclick="@OnRemoved" class="delete-item">x</a>
+    <div class="title">@(Drug.Size) x @Drug.Special.Name (@(Drug.GetTotalPrice() / Drug.Size) each)</div>
+    <div class="item-price">
+        @Drug.GetFormattedTotalPrice()
+    </div>
+</div>
+
+@code {
+    [Parameter] public Drug Drug { get; set; }
+    [Parameter] public EventCallback OnRemoved { get; set; }
+}

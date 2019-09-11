@@ -18,5 +18,9 @@ namespace Workshop
 
         public List<Drug> Drugs { get; set; } = new List<Drug>();
 
+        public decimal GetTotalPrice() => Drugs.Sum(p => p.GetTotalPrice());
+
+        public string GetFormattedTotalPrice() => GetTotalPrice().ToString("0.00");
+
     }
 }

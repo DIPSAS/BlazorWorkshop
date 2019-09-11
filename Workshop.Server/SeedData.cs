@@ -25,7 +25,7 @@
                 new DrugSpecial()
                 {
                     Id = 3,
-                    Name = "The fatty",
+                    Name = "The big one",
                     Description = "Control your diabetes in 1-2-3",
                     BasePrice = 10.50m,
                     ImageUrl = "img/drugs/insulin.jpg",

@@ -21,5 +21,15 @@ namespace Workshop
 
         public int SpecialId { get; set; }
 
+        public decimal GetTotalPrice()
+        {
+            return Special.BasePrice * Size; 
+        }
+
+        public string GetFormattedTotalPrice()
+        {
+            return GetTotalPrice().ToString("0.00");
+        }
+
     }
 }

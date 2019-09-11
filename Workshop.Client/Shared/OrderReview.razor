@@ -1,0 +1,22 @@
+@foreach (var Drug in Order.Drugs)
+{
+    <p>
+        <strong>
+            @(Drug.Size) x
+            @Drug.Special.Name
+            ($@Drug.GetFormattedTotalPrice())
+        </strong>
+    </p>
+
+}
+
+<p>
+    <strong>
+        Total price:
+        $@Order.GetFormattedTotalPrice()
+    </strong>
+</p>
+
+@code {
+    [Parameter] public Order Order { get; set; }
+}

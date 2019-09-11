@@ -19,14 +19,19 @@
         <div class="track-order">
             <div class="track-order-title">
                 <h2>
-                    Order placed @orderWithStatus.Order.CreatedTime.ToLongDateString()
+                    Order placed @(orderWithStatus.Order.CreatedTime.ToLongDateString())
                 </h2>
                 <p class="ml-auto mb-0">
                     Status: <strong>@orderWithStatus.StatusText</strong>
                 </p>
             </div>
             <div class="track-order-body">
-                TODO: show more details
+                 <div class="track-order-details">
+                     <OrderReview Order="@orderWithStatus.Order" />
+                 </div>
+                 <div class="track-order-map">
+                    <Map Zoom="13" Markers="orderWithStatus.MapMarkers" />
+                </div>
             </div>
         </div>
     }

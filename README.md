@@ -9,7 +9,7 @@ You will see several projects in the repository.
 **Workshop.ComponentsLibrary** contains helper code that will be used later
 
 
-### Stage 1
+## Stage 1
 
 Ensure that the server starts and works properly by building and running it. It should show a white page with the title "Drug Express" 
 
@@ -90,7 +90,7 @@ Finally we want to add a heading to our web application. In the `Client` project
 Build and run the app too see your web store taking form.
 
 
-### Stage 2
+## Stage 2
 
 In this section we will look at enabling the users to customize their special before adding it to their order.
 
@@ -243,3 +243,157 @@ Run the application and you should now be able to add drugs to your order and se
 Pressing the `Order` button will save the order to the database but currently there is nothing in the user interface that indicates it has happened.
 
 
+## Stage 3
+In this stage we want to be able to show the users order status and let them track their order on a map.
+
+### Show order status
+
+To show the order status we need to add a navigation link.
+In `Shared/MainLayout.razor` on the client, add a NavLink component after the existing one.
+
+```html
+<NavLink href="myorders" class="nav-tab">
+    <img src="img/bike.svg" />
+    <div>My Orders</div>
+</NavLink>
+```
+
+Next we need to create the `myorders` component. Create a file called `MyOrders.razor` in the `Pages` directory on the client and add the following code:
+
+```html
+@page "/myorders"
+<div class="main">
+    My orders will go here
+</div>
+```
+
+Notice how we define the route at the top which corresponds with the `href` attribute on the `NavLink` component in `MainLayout.razor`. This is how Blazor knows which component to load.
+
+Start the application and you should have a new tab at the top. When clicking it you should see the message "*My orders will go here*".
+
+To display a list of orders we again need to inject the http client into our `MyOrders` component and add a code block which requests the data we need and stores it in a local field.
+```C#
+@inject HttpClient HttpClient
+```
+and
+```html
+@code {
+    List<OrderWithStatus> ordersWithStatus;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        ordersWithStatus = await HttpClient.GetJsonAsync<List<OrderWithStatus>>("orders");
+    }
+}
+```
+
+We need to make the UI display different output in different cases:
+
+1. While we're waiting for data to load
+2. If it turns out that the user has never placed any orders
+3. If the user has placed one or more orders
+
+Let's update the `MyOrders`'s markup inside the main `div` to reflect this:
+
+```html
+
+    @if (ordersWithStatus == null)
+    {
+        <text>Loading...</text>
+    }
+    else if (ordersWithStatus.Count == 0)
+    {
+        <h2>No orders placed</h2>
+        <a class="btn btn-success" href="">Order some drugs</a>
+    }
+    else
+    {
+        <text>TODO: show orders</text>
+    }
+```
+
+The `<text>` element is not HTML or a component. It is a signal to the compiler that you want to treat the contents within the element as a string and not as C# source code.
+Next, delete the database file called `drugs.db` in the `Server` project structure and run the application to show the message that no orders are placed. 
+
+### Showing a grid of orders
+Now we want to show all the orders to the user. Replace the `TODO` above with the following code where the component OrderItem is given to you.
+
+```html
+<div class="list-group orders-list">
+    @foreach (var item in ordersWithStatus)
+    {
+        <OrderItem OrderWithStatus=item />
+    }
+</div>
+```
+Feel free to check out or change things on the `OrderItem` component in the `Shared` directory.
+Run the application, place an order and go to the `My Orders` tab. You will see your order with status, items, and total.
+
+Next we want to enable the user to see their order details and track their order on a map.
+
+### Order details and tracking
+
+We have provided the more complicated parts of this component.   
+Have a look at `Pages/OrderDetails.razor`. This is most of the logic needed to show the order information.
+What it does is:  
+- Hook into the `OnParametersSet` lifecycle method which runs both when the component is instantiated and when the parameters change
+- We start polling for updates on the order, cancelling any pending polling for other orders.
+- Every 4 seconds, poll the backend for an update to the order.
+- If the order is invalid we cancel the polling and prints a message telling the user
+- If the order is valid we show when the order is placed and its status.
+- Call the `StateHasChanged()` method after polling is complete to tell Blazor to rerender the component. 
+
+Run the application to see the results. Place an order, go to the `My Orders` tab and clcik track.
+We want to show even more on this page, so create a file called `OrderReview.razor` in the `Shared` directory and add the following markup:
+
+```html
+@foreach (var Drug in Order.Drugs)
+{
+    <p>
+        <strong>
+            @(Drug.Size) x
+            @Drug.Special.Name
+            ($@Drug.GetFormattedTotalPrice())
+        </strong>
+    </p>
+
+}
+
+<p>
+    <strong>
+        Total price:
+        $@Order.GetFormattedTotalPrice()
+    </strong>
+</p>
+
+@code {
+    [Parameter] public Order Order { get; set; }
+}
+```
+
+Backi n OrderDetails.razor, replace the TODO with the following code to use your new component:
+
+```html
+<div class="track-order-details">
+    <OrderReview Order="@orderWithStatus.Order" />
+</div>
+```
+
+Now run your application to see a functional order details display.
+If you are quick enough from ordering, you will see the status change live from *Preparing* to *out for delivery* and finally *delivered* within about one minute.
+You can change the delivery time in the `Shared` project's `OrderWithStatus.cs` file by changing the `deliveryDuration` variable. 
+
+Finally we want to add the possibility of tracking the orders on a map. 
+To do this we want to use JavaScript Interop which a way of calling browser APIs or existing JavaScript libraries from your blazor code. 
+We have supplied you with most of the logic to get this up and running and you mostly have to connect the dots to make it show up in your order details.
+The logic can be found in the `ComponentsLibrary` project under `Map`.
+In your `_Imports.razor` file, add a using statement to bring the map into scope: 
+```c#
+@using Workshop.ComponentsLibrary.Map
+```
+Add the `Map` component to the `OrderDetails` component by adding the follow belw the `track-order-details` `div`:
+```html
+<div class="track-order-map">
+    <Map Zoom="13" Markers="orderWithStatus.MapMarkers" />
+</div>
+```

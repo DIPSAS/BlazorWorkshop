@@ -1,0 +1,33 @@
+@page "/myorders"
+@inject HttpClient HttpClient
+
+<div class="main">
+    @if (ordersWithStatus == null)
+    {
+        <text>Loading...</text>
+    }
+    else if (ordersWithStatus.Count == 0)
+    {
+        <h2>No orders placed</h2>
+        <a class="btn btn-success" href="">Order some drugs</a>
+    }
+    else
+    {
+        <div class="list-group orders-list">
+            @foreach (var item in ordersWithStatus)
+            {
+                <OrderItem OrderWithStatus="item" />
+            }
+        </div>
+    }
+</div>
+
+
+@code {
+    List<OrderWithStatus> ordersWithStatus;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        ordersWithStatus = await HttpClient.GetJsonAsync<List<OrderWithStatus>>("orders");
+    }
+}

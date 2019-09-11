@@ -56,7 +56,7 @@ namespace Workshop.Server
         public async Task<ActionResult<int>> PlaceOrder(Order order)
         {
             order.CreatedTime = DateTime.Now;
-            order.DeliveryLocation = new LatLong(51.5001, -0.1239);
+            order.DeliveryLocation = new LatLong(69.6670603, 18.9702901);
             // order.UserId = GetUserId();
 
             // Enforce existence of Drug.SpecialId

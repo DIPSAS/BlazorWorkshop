@@ -16,10 +16,7 @@ namespace Workshop
 
         public LatLong DeliveryLocation { get; set; }
 
-        public List<Pizza> Pizzas { get; set; } = new List<Pizza>();
+        public List<Drug> Drugs { get; set; } = new List<Drug>();
 
-        public decimal GetTotalPrice() => Pizzas.Sum(p => p.GetTotalPrice());
-
-        public string GetFormattedTotalPrice() => GetTotalPrice().ToString("0.00");
     }
 }

@@ -26,7 +26,7 @@ namespace Workshop.Server
             services.AddMvc()
                 .AddNewtonsoftJson();
 
-            services.AddDbContext<PizzaStoreContext>(options => options.UseSqlite("Data Source=pizza.db"));
+            services.AddDbContext<DrugStoreContext>(options => options.UseSqlite("Data Source=drug.db"));
 
             services.AddResponseCompression(options =>
             {

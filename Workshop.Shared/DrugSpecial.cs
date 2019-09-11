@@ -1,9 +1,9 @@
 ﻿namespace Workshop
 {
     /// <summary>
-    /// Represents a pre-configured template for a pizza a user can order
+    /// Represents a pre-configured template for a drug a user can order
     /// </summary>
-    public class PizzaSpecial
+    public class DrugSpecial
     {
         public int Id { get; set; }
 

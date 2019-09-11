@@ -12,9 +12,9 @@ namespace Workshop.Server
     // [Authorize]
     public class OrdersController : Controller
     {
-        private readonly PizzaStoreContext _db;
+        private readonly DrugStoreContext _db;
 
-        public OrdersController(PizzaStoreContext db)
+        public OrdersController(DrugStoreContext db)
         {
             _db = db;
         }
@@ -25,8 +25,8 @@ namespace Workshop.Server
             var orders = await _db.Orders
                 // .Where(o => o.UserId == GetUserId())
                 .Include(o => o.DeliveryLocation)
-                .Include(o => o.Pizzas).ThenInclude(p => p.Special)
-                .Include(o => o.Pizzas).ThenInclude(p => p.Toppings).ThenInclude(t => t.Topping)
+                .Include(o => o.Drugs).ThenInclude(p => p.Special)
+                .Include(o => o.Drugs)
                 .OrderByDescending(o => o.CreatedTime)
                 .ToListAsync();
 
@@ -40,8 +40,8 @@ namespace Workshop.Server
                 .Where(o => o.OrderId == orderId)
                 // .Where(o => o.UserId == GetUserId())
                 .Include(o => o.DeliveryLocation)
-                .Include(o => o.Pizzas).ThenInclude(p => p.Special)
-                .Include(o => o.Pizzas).ThenInclude(p => p.Toppings).ThenInclude(t => t.Topping)
+                .Include(o => o.Drugs).ThenInclude(p => p.Special)
+                .Include(o => o.Drugs)
                 .SingleOrDefaultAsync();
 
             if (order == null)
@@ -59,19 +59,13 @@ namespace Workshop.Server
             order.DeliveryLocation = new LatLong(51.5001, -0.1239);
             // order.UserId = GetUserId();
 
-            // Enforce existence of Pizza.SpecialId and Topping.ToppingId
+            // Enforce existence of Drug.SpecialId
             // in the database - prevent the submitter from making up
-            // new specials and toppings
-            foreach (var pizza in order.Pizzas)
+            // new specials
+            foreach (var drug in order.Drugs)
             {
-                pizza.SpecialId = pizza.Special.Id;
-                pizza.Special = null;
-
-                foreach (var topping in pizza.Toppings)
-                {
-                    topping.ToppingId = topping.Topping.Id;
-                    topping.Topping = null;
-                }
+                drug.SpecialId = drug.Special.Id;
+                drug.Special = null;
             }
             
             _db.Orders.Attach(order);

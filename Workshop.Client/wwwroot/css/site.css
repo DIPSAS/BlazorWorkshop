@@ -38,7 +38,7 @@ form {
 .logo {
     margin-right: 3rem;
     margin-top: 0.5rem;
-    width: 10rem;
+    width: 11rem;
 }
 
 .content {
@@ -128,7 +128,7 @@ form {
         font-size: 0.8rem;
     }
 
-.pizza-cards {
+.drug-cards {
     display: grid;
     grid-template-columns: repeat(auto-fill, 20rem);
     grid-gap: 2rem;
@@ -136,7 +136,7 @@ form {
     padding-left: 0;
 }
 
-    .pizza-cards > li {
+    .drug-cards > li {
         height: 10rem;
         position: relative;
         background-size: cover;
@@ -146,11 +146,11 @@ form {
         transition: 0.1s ease-out;
     }
 
-        .pizza-cards > li:hover {
+        .drug-cards > li:hover {
             transform: scale(1.02);
         }
 
-.pizza-info {
+.drug-info {
     border-radius: 0.5rem;
     top: 0;
     left: 0;
@@ -165,7 +165,7 @@ form {
     line-height: 1.25rem;
 }
 
-    .pizza-info .title {
+    .drug-info .title {
         color: white;
         font-size: 1.4rem;
         display: block;
@@ -174,7 +174,7 @@ form {
         text-transform: uppercase;
     }
 
-    .pizza-info .price {
+    .drug-info .price {
         position: absolute;
         bottom: 0.5rem;
         right: 1rem;
@@ -320,7 +320,7 @@ form {
         background-color: rgba(255,255,255,0.1);
     }
 
-.configured-pizza-item {
+.configured-drug-item {
     display: flex;
     flex-direction: row;
 }

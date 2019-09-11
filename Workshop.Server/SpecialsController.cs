@@ -10,15 +10,15 @@ namespace Workshop.Server
     [ApiController]
     public class SpecialsController : Controller
     {
-        private readonly PizzaStoreContext _db;
+        private readonly DrugStoreContext _db;
 
-        public SpecialsController(PizzaStoreContext db)
+        public SpecialsController(DrugStoreContext db)
         {
             _db = db;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<PizzaSpecial>>> GetSpecials()
+        public async Task<ActionResult<List<DrugSpecial>>> GetSpecials()
         {
             return (await _db.Specials.ToListAsync()).OrderByDescending(sp => sp.BasePrice).ToList();
         }

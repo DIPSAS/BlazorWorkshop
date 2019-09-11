@@ -2,13 +2,13 @@
 
 namespace Workshop.Server
 {
-    [Route("pizzas")]
+    [Route("drugs")]
     [ApiController]
-    public class PizzasController : Controller
+    public class DrugController : Controller
     {
-        private readonly PizzaStoreContext _db;
+        private readonly DrugStoreContext _db;
 
-        public PizzasController(PizzaStoreContext db)
+        public DrugController(DrugStoreContext db)
         {
             _db = db;
         }

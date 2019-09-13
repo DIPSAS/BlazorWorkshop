@@ -8,31 +8,32 @@ You will see several projects in the repository.
 **Workshop.Shared** contains shared model types  
 **Workshop.ComponentsLibrary** contains helper code that will be used later
 
-
 ## Stage 1
+
+### Adding some drugs
 
 Ensure that the server starts and works properly by building and running it. It should show a white page with the title "Drug Express" 
 
-Open Pages/Index.razor in the `Client` project to see the code for the home page. Feel free to change the title and restart the server.  
+Open `Pages/Index.razor` in the `Client` project to see the code for the home page. Feel free to change the title and restart the server.  
   
 Next, add a `@code` block to the file and initialize a list field to keep track of your specials:
 
-  ```c#
+  ```csharp
     @code {
         List<DrugSpecial> specials;
     }
   ```
 The `DrugSpecial` type is already defined for you in the `Shared`-project
 
-To fetch the available list of specials we need to call an API on the backend. Blazor provides ad preconfigured `HttpClient` through dependency injection that is already set up with the correct base address. You can use the `@inject` directive to inject an `HttpClient` into the component using dependency injection:
+To fetch the available list of specials we need to call an API on the backend. Blazor provides a preconfigured `HttpClient` through dependency injection that is already set up with the correct base address. You can use the `@inject` directive to inject an `HttpClient` into the component using dependency injection:
 
-```c#
+```csharp
     @page "/"
     @inject HttpClient HttpClient
 ```
-Override the lifecycle method `OnInitializedAsync` and use the `GetJsonAsync<T>()` method to get the specials and automatically deserialize the JSON into the `DrugSpecial` type. More on lifecycle methods can be found [here](https://docs.microsoft.com/en-us/aspnet/core/blazor/components?irgwc=1&OCID=AID2000142_aff_7593_1243925&tduid=(ir__2cbxejonikkfryxbkk0sohz30n2xjat0v6k1umcx00)(7593)(1243925)(je6NUbpObpQ-B1gQL0vBp6Fj0YYo5GtqkA)()&irclickid=_2cbxejonikkfryxbkk0sohz30n2xjat0v6k1umcx00&view=aspnetcore-3.0#lifecycle-methods?ranMID=24542&ranEAID=je6NUbpObpQ&ranSiteID=je6NUbpObpQ-B1gQL0vBp6Fj0YYo5GtqkA&epi=je6NUbpObpQ-B1gQL0vBp6Fj0YYo5GtqkA)
+Override the lifecycle hook `OnInitializedAsync` and use the `GetJsonAsync<T>()` method to get the specials and automatically deserialize the JSON into the `DrugSpecial` type.
 
-```javascript
+```csharp
     @code {
         List<DrugSpecial> specials;
 
@@ -68,6 +69,8 @@ To list the specials on your page we need to add some markup. Replace the title 
 
 If you build and run the application again you should see some default drugs listed with a description and price. Feel free to add new drugs in the `Server` projects `SeedData.cs`. The image can be added to the `Client` projects `wwwroot/img` directory.
 
+### Adding a heading
+
 Finally we want to add a heading to our web application. In the `Client` project, navigate to `Shared/MainLayout.razor`. Here the main layout for the application is defined. Currently, the only thing here is the body which you have been working on up until now. To add a header with a branding logo and navigation, add the following code:
 
 ```html
@@ -91,6 +94,8 @@ Build and run the app too see your web store taking form.
 
 
 ## Stage 2
+
+### Adding a drug customization dialog
 
 In this section we will look at enabling the users to customize their special before adding it to their order.
 
@@ -117,14 +122,14 @@ Run the appllication and check the browser developer console for print statement
 
 Printing the name to the console is all well and good, but we want to create a custom handler that shows a dialog for customizing the drug special.
 First, add some additional fields next to the list of specials. One of them will hold the `Drug` we are currently configuring and the other will determine whether or not to show the configure dialog.
-```javascript
+```csharp
 Drug configuringDrug;
 bool showingConfigureDialog;
 ```
 
 Next, add a `ShowConfigureDrugDialog` method to the `@code` block in `Index.razor` for handling when a drug special is clicked.
 
-```javascript
+```csharp
 void ShowConfigureDrugDialog(DrugSpecial special)
 {
     configuringDrug = new Drug()
@@ -143,7 +148,7 @@ We also need to update the `@onclick` handler to call our new method instead of 
 <li @onclick="@(() => ShowConfigureDrugDialog(special))" style="background-image: url('@special.ImageUrl')">
 ```
 
-If you run the application now, nothing will happen including printing to the console. This is because we need to customization dialog. 
+If you run the application now, nothing will happen including printing to the console. This is because we need to add a customization dialog. 
 To achieve this we need to create a new component. We have already provided you with a `ConfigureDrugDialog` component found under the `Shared` folder in the `Client` project.
 The dialog component needs a `Drug` parameter that specifies the drug being configured and two callbacks `OnCancel` and `OnConfirm`.
 
@@ -161,7 +166,7 @@ The code block will show a `ConfigureDrugDialog` component on the page if the `s
 
 In `Index.razor`, we also need to implement the `CancelConfigureDrugDialog` and `ConfirmDrugDialog` methods that we sent as parameters to the `ConfigureDrugDialog` component. We will leave the `ConfirmDrugDialog` empty for now. 
 
-```C#
+```csharp
 void CancelConfigureDrugDialog() {
     configuringDrug = null;
     showingConfigureDialog = false;
@@ -175,7 +180,7 @@ void ConfirmDrugDialog() {
 If you start and run the application you should be able to use a slider to decide how many of the item you want, and you should be able to cancel the configuration and go back to the main page.
 
 We want the `OnConfirm` event to add the customized drug to the user's order. Add an `Order` field to the `Index` component. We have already supplied the type `Order`.
-```C#
+```csharp
 Order order = new Order();
 ```
 
@@ -188,7 +193,7 @@ void ConfirmDrugDialog() {
 }
 ```
 
-### Displaying the order
+## Displaying the order
 
 To display the order we have supplied a `ConfiguredDrugItem` component in the `Shared` directory of the `Client` project. 
 `ConfiguredDrugItem` takes two parameters, `Drug` for what drug is shown and an event callback `OnRemoved` for when the item is removed from the order.
@@ -226,7 +231,7 @@ Add this markup to the `Index.razor` markup just below the main `div`:
 In the `@code` section you also need to add eventhandlers for the events specified in the markup above. 
 In the `RemoveConfiguredDrug` handler we simply remove the drug from the order. In the `PlaceOrder` handler we post the order so its saved in the database and reset the current order. 
 
-```C#
+```csharp
 void RemoveConfiguredDrug(Drug drug)
 {
     order.Drugs.Remove(drug);
@@ -240,7 +245,7 @@ async Task PlaceOrder()
 ``` 
 
 Run the application and you should now be able to add drugs to your order and see the total in the sidebar to the right.
-Pressing the `Order` button will save the order to the database but currently there is nothing in the user interface that indicates it has happened.
+Pressing the `Order` button will save the order to the database but currently there is nothing in the user interface that indicates it has happened. Check out the next step to find out how to display the user's orders!
 
 
 ## Stage 3
@@ -272,11 +277,13 @@ Notice how we define the route at the top which corresponds with the `href` attr
 Start the application and you should have a new tab at the top. When clicking it you should see the message "*My orders will go here*".
 
 To display a list of orders we again need to inject the http client into our `MyOrders` component and add a code block which requests the data we need and stores it in a local field.
-```C#
+
+```csharp
 @inject HttpClient HttpClient
 ```
 and
-```html
+
+```csharp
 @code {
     List<OrderWithStatus> ordersWithStatus;
 
@@ -295,28 +302,27 @@ We need to make the UI display different output in different cases:
 
 Let's update the `MyOrders`'s markup inside the main `div` to reflect this:
 
-```html
-
-    @if (ordersWithStatus == null)
-    {
-        <text>Loading...</text>
-    }
-    else if (ordersWithStatus.Count == 0)
-    {
-        <h2>No orders placed</h2>
-        <a class="btn btn-success" href="">Order some drugs</a>
-    }
-    else
-    {
-        <text>TODO: show orders</text>
-    }
+```csharp
+@if (ordersWithStatus == null)
+{
+    <text>Loading...</text>
+}
+else if (ordersWithStatus.Count == 0)
+{
+    <h2>No orders placed</h2>
+    <a class="btn btn-success" href="">Order some drugs</a>
+}
+else
+{
+    <text>TODO: show orders</text>
+}
 ```
 
 The `<text>` element is not HTML or a component. It is a signal to the compiler that you want to treat the contents within the element as a string and not as C# source code.
 Next, delete the database file called `drugs.db` in the `Server` project structure and run the application to show the message that no orders are placed. 
 
 ### Showing a grid of orders
-Now we want to show all the orders to the user. Replace the `TODO` above with the following code where the component OrderItem is given to you.
+Now we want to show all the orders to the user. Replace the `TODO` above with the following code where the component `OrderItem` is given to you.
 
 ```html
 <div class="list-group orders-list">
@@ -326,6 +332,7 @@ Now we want to show all the orders to the user. Replace the `TODO` above with th
     }
 </div>
 ```
+
 Feel free to check out or change things on the `OrderItem` component in the `Shared` directory.
 Run the application, place an order and go to the `My Orders` tab. You will see your order with status, items, and total.
 
@@ -343,7 +350,7 @@ What it does is:
 - If the order is valid we show when the order is placed and its status.
 - Call the `StateHasChanged()` method after polling is complete to tell Blazor to rerender the component. 
 
-Run the application to see the results. Place an order, go to the `My Orders` tab and clcik track.
+Run the application to see the results. Place an order, go to the `My Orders` tab and click track.
 We want to show even more on this page, so create a file called `OrderReview.razor` in the `Shared` directory and add the following markup:
 
 ```html
@@ -371,7 +378,7 @@ We want to show even more on this page, so create a file called `OrderReview.raz
 }
 ```
 
-Backi n OrderDetails.razor, replace the TODO with the following code to use your new component:
+Back in OrderDetails.razor, replace the TODO with the following code to use your new component:
 
 ```html
 <div class="track-order-details">
@@ -387,13 +394,18 @@ Finally we want to add the possibility of tracking the orders on a map.
 To do this we want to use JavaScript Interop which a way of calling browser APIs or existing JavaScript libraries from your blazor code. 
 We have supplied you with most of the logic to get this up and running and you mostly have to connect the dots to make it show up in your order details.
 The logic can be found in the `ComponentsLibrary` project under `Map`.
-In your `_Imports.razor` file, add a using statement to bring the map into scope: 
-```c#
+In your `_Imports.razor` file, add a using statement to bring the map into scope:
+
+```csharp
 @using Workshop.ComponentsLibrary.Map
 ```
-Add the `Map` component to the `OrderDetails` component by adding the follow belw the `track-order-details` `div`:
+
+Add the `Map` component to the `OrderDetails` component by adding the following below the `track-order-details` `div`:
+
 ```html
 <div class="track-order-map">
     <Map Zoom="13" Markers="orderWithStatus.MapMarkers" />
 </div>
 ```
+
+And that's it! Now you have a working drug delivery shop. Check out [Blazor's](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) website for more info on the features it provides.
